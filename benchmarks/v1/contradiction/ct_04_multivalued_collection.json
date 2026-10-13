@@ -1,0 +1,44 @@
+{
+  "scenario_id": "ct_04_multivalued_collection",
+  "version": "1.0.0",
+  "category": "CONTRADICTION_HANDLING",
+  "description": "Multiple role assignments asserted concurrently for a user (editor and admin). Evaluates deterministic merging into a sorted unique list under MULTIVALUED_COLLECTION.",
+  "contradiction_policy": "MULTIVALUED_COLLECTION",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_ct04_role_editor",
+      "timestamp": "2026-06-01T00:00:00Z",
+      "entity_id": "user_bob",
+      "attribute": "granted_roles",
+      "value": "editor",
+      "valid_from": "2026-06-01T00:00:00Z"
+    },
+    {
+      "event_type": "INSERT",
+      "event_id": "e_ct04_role_admin",
+      "timestamp": "2026-06-01T00:00:00Z",
+      "entity_id": "user_bob",
+      "attribute": "granted_roles",
+      "value": "admin",
+      "valid_from": "2026-06-01T00:00:00Z"
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_ct04_merged_roles",
+      "query": {
+        "entity_id": "user_bob",
+        "attribute": "granted_roles",
+        "as_of_valid_time": "2026-06-02T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": ["admin", "editor"],
+        "forbidden_values": ["editor", "admin"],
+        "valid_interval": ["2026-06-01T00:00:00Z", null]
+      }
+    }
+  ]
+}

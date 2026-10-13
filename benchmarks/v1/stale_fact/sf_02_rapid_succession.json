@@ -1,0 +1,80 @@
+{
+  "scenario_id": "sf_02_rapid_succession",
+  "version": "1.0.0",
+  "category": "STALE_FACT_DETECTION",
+  "description": "Rapid succession of order state changes. Evaluates multiple superseded states and strict leakage prevention.",
+  "contradiction_policy": "DETERMINISTIC_ABSTAIN",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_sf02_1",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "entity_id": "order_99",
+      "attribute": "shipping_status",
+      "value": "ORDER_PLACED",
+      "valid_from": "2026-01-01T00:00:00Z"
+    },
+    {
+      "event_type": "UPDATE",
+      "event_id": "e_sf02_2",
+      "timestamp": "2026-01-02T00:00:00Z",
+      "effective_time": "2026-01-02T00:00:00Z",
+      "entity_id": "order_99",
+      "attribute": "shipping_status",
+      "value": "PROCESSING",
+      "policy": "TEMPORAL_SUPERSEDE"
+    },
+    {
+      "event_type": "UPDATE",
+      "event_id": "e_sf02_3",
+      "timestamp": "2026-01-03T00:00:00Z",
+      "effective_time": "2026-01-03T00:00:00Z",
+      "entity_id": "order_99",
+      "attribute": "shipping_status",
+      "value": "SHIPPED",
+      "policy": "TEMPORAL_SUPERSEDE"
+    },
+    {
+      "event_type": "UPDATE",
+      "event_id": "e_sf02_4",
+      "timestamp": "2026-01-04T00:00:00Z",
+      "effective_time": "2026-01-04T00:00:00Z",
+      "entity_id": "order_99",
+      "attribute": "shipping_status",
+      "value": "DELIVERED",
+      "policy": "TEMPORAL_SUPERSEDE"
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_sf02_delivered_current",
+      "query": {
+        "entity_id": "order_99",
+        "attribute": "shipping_status",
+        "as_of_valid_time": "2026-01-05T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "DELIVERED",
+        "forbidden_values": ["ORDER_PLACED", "PROCESSING", "SHIPPED"],
+        "valid_interval": ["2026-01-04T00:00:00Z", null]
+      }
+    },
+    {
+      "query_id": "q_sf02_shipped_time",
+      "query": {
+        "entity_id": "order_99",
+        "attribute": "shipping_status",
+        "as_of_valid_time": "2026-01-03T12:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "SHIPPED",
+        "forbidden_values": ["ORDER_PLACED", "PROCESSING", "DELIVERED"],
+        "valid_interval": ["2026-01-03T00:00:00Z", "2026-01-04T00:00:00Z"]
+      }
+    }
+  ]
+}

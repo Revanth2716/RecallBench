@@ -1,0 +1,46 @@
+{
+  "scenario_id": "ct_02_lww_tie_break",
+  "version": "1.0.0",
+  "category": "CONTRADICTION_HANDLING",
+  "description": "Two conflicting auth token assertions. Evaluates deterministic resolution under LAST_ASSERTION_WINS.",
+  "contradiction_policy": "LAST_ASSERTION_WINS",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_ct02_1",
+      "fact_id": "fact_token_v1",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "entity_id": "service_gateway",
+      "attribute": "auth_token",
+      "value": "tok_v1_stale",
+      "valid_from": "2026-01-01T00:00:00Z"
+    },
+    {
+      "event_type": "INSERT",
+      "event_id": "e_ct02_2",
+      "fact_id": "fact_token_v2",
+      "timestamp": "2026-01-02T00:00:00Z",
+      "entity_id": "service_gateway",
+      "attribute": "auth_token",
+      "value": "tok_v2_active",
+      "valid_from": "2026-01-01T00:00:00Z"
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_ct02_resolution",
+      "query": {
+        "entity_id": "service_gateway",
+        "attribute": "auth_token",
+        "as_of_valid_time": "2026-01-05T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "tok_v2_active",
+        "forbidden_values": ["tok_v1_stale"],
+        "valid_interval": ["2026-01-01T00:00:00Z", null]
+      }
+    }
+  ]
+}

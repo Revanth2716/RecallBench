@@ -1,0 +1,60 @@
+{
+  "scenario_id": "sf_01_single_supersede",
+  "version": "1.0.0",
+  "category": "STALE_FACT_DETECTION",
+  "description": "User updates primary email. Validates that post-update queries strictly penalize returning superseded email.",
+  "contradiction_policy": "DETERMINISTIC_ABSTAIN",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_sf01_1",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "entity_id": "user_42",
+      "attribute": "primary_email",
+      "value": "old@example.com",
+      "valid_from": "2026-01-01T00:00:00Z"
+    },
+    {
+      "event_type": "UPDATE",
+      "event_id": "e_sf01_2",
+      "timestamp": "2026-04-01T00:00:00Z",
+      "effective_time": "2026-04-01T00:00:00Z",
+      "entity_id": "user_42",
+      "attribute": "primary_email",
+      "value": "new@example.com",
+      "policy": "TEMPORAL_SUPERSEDE"
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_sf01_current",
+      "query": {
+        "entity_id": "user_42",
+        "attribute": "primary_email",
+        "as_of_valid_time": "2026-07-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "new@example.com",
+        "forbidden_values": ["old@example.com"],
+        "valid_interval": ["2026-04-01T00:00:00Z", null]
+      }
+    },
+    {
+      "query_id": "q_sf01_historical",
+      "query": {
+        "entity_id": "user_42",
+        "attribute": "primary_email",
+        "as_of_valid_time": "2026-02-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "old@example.com",
+        "forbidden_values": ["new@example.com"],
+        "valid_interval": ["2026-01-01T00:00:00Z", "2026-04-01T00:00:00Z"]
+      }
+    }
+  ]
+}

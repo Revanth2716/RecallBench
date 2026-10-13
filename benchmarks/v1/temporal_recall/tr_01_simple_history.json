@@ -1,0 +1,74 @@
+{
+  "scenario_id": "tr_01_simple_history",
+  "version": "1.0.0",
+  "category": "TEMPORAL_RECALL",
+  "description": "User relocates office from Boston to Seattle. Evaluates point-in-time historical recall vs current recall vs pre-genesis query.",
+  "contradiction_policy": "DETERMINISTIC_ABSTAIN",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_tr01_1",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "entity_id": "user_alice",
+      "attribute": "office_city",
+      "value": "Boston",
+      "valid_from": "2026-01-01T00:00:00Z"
+    },
+    {
+      "event_type": "UPDATE",
+      "event_id": "e_tr01_2",
+      "timestamp": "2026-06-01T00:00:00Z",
+      "effective_time": "2026-06-01T00:00:00Z",
+      "entity_id": "user_alice",
+      "attribute": "office_city",
+      "value": "Seattle",
+      "policy": "TEMPORAL_SUPERSEDE"
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_tr01_past",
+      "query": {
+        "entity_id": "user_alice",
+        "attribute": "office_city",
+        "as_of_valid_time": "2026-03-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "Boston",
+        "forbidden_values": ["Seattle"],
+        "valid_interval": ["2026-01-01T00:00:00Z", "2026-06-01T00:00:00Z"]
+      }
+    },
+    {
+      "query_id": "q_tr01_present",
+      "query": {
+        "entity_id": "user_alice",
+        "attribute": "office_city",
+        "as_of_valid_time": "2026-08-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "Seattle",
+        "forbidden_values": ["Boston"],
+        "valid_interval": ["2026-06-01T00:00:00Z", null]
+      }
+    },
+    {
+      "query_id": "q_tr01_pre_genesis",
+      "query": {
+        "entity_id": "user_alice",
+        "attribute": "office_city",
+        "as_of_valid_time": "2025-11-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "NOT_FOUND",
+        "expected_abstention": true,
+        "expected_value": null,
+        "forbidden_values": ["Boston", "Seattle"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "scenario_id": "ei_01_homonymous_attributes",
+  "version": "1.0.0",
+  "category": "ENTITY_ISOLATION",
+  "description": "Two distinct entities share identical attribute values. Evaluates strict entity isolation and provenance tracking.",
+  "contradiction_policy": "DETERMINISTIC_ABSTAIN",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_ei01_1",
+      "fact_id": "fact_doctor_room",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "entity_id": "doctor_smith",
+      "attribute": "office_room",
+      "value": "Suite 404",
+      "valid_from": "2026-01-01T00:00:00Z"
+    },
+    {
+      "event_type": "INSERT",
+      "event_id": "e_ei01_2",
+      "fact_id": "fact_patient_room",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "entity_id": "patient_smith",
+      "attribute": "office_room",
+      "value": "Suite 404",
+      "valid_from": "2026-01-01T00:00:00Z"
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_ei01_doctor",
+      "query": {
+        "entity_id": "doctor_smith",
+        "attribute": "office_room",
+        "as_of_valid_time": "2026-03-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "Suite 404",
+        "forbidden_values": []
+      }
+    },
+    {
+      "query_id": "q_ei01_patient",
+      "query": {
+        "entity_id": "patient_smith",
+        "attribute": "office_room",
+        "as_of_valid_time": "2026-03-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "Suite 404",
+        "forbidden_values": []
+      }
+    },
+    {
+      "query_id": "q_ei01_unrelated",
+      "query": {
+        "entity_id": "nurse_clara",
+        "attribute": "office_room",
+        "as_of_valid_time": "2026-03-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "NOT_FOUND",
+        "expected_abstention": true,
+        "expected_value": null,
+        "forbidden_values": ["Suite 404"]
+      }
+    }
+  ]
+}

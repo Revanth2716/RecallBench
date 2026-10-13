@@ -1,0 +1,45 @@
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Python cache and byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Testing, logs, and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Node, Vite, and frontend build outputs
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+.DS_Store
+Thumbs.db
+
+# RecallBench runtime databases, caches, and run-history records
+backend/data/*.db
+backend/data/*.db-wal
+backend/data/*.db-shm
+*.db
+*.sqlite
+*.sqlite3
+
+# Benchmark runtime execution reports
+backend/data/runs/*.json
+!backend/data/runs/.gitkeep
+
+# Automated browser smoke test artifacts and screenshots
+backend/data/smoke_test_evidence/*.png
+backend/data/smoke_test_evidence/*.json
+!backend/data/smoke_test_evidence/.gitkeep
+
+# Temporary browser profiles
+*chrome_smoke*
+temp_chrome*

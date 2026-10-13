@@ -1,0 +1,45 @@
+{
+  "scenario_id": "ct_01_abstain_conflict",
+  "version": "1.0.0",
+  "category": "CONTRADICTION_HANDLING",
+  "description": "Two sensors assert conflicting temperature measurements at identical intervals. Evaluates deterministic abstention under DETERMINISTIC_ABSTAIN.",
+  "contradiction_policy": "DETERMINISTIC_ABSTAIN",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_ct01_1",
+      "fact_id": "fact_temp_sensor_a",
+      "timestamp": "2026-05-01T00:00:00Z",
+      "entity_id": "lake_station",
+      "attribute": "water_temp",
+      "value": 22.5,
+      "valid_from": "2026-05-01T00:00:00Z"
+    },
+    {
+      "event_type": "INSERT",
+      "event_id": "e_ct01_2",
+      "fact_id": "fact_temp_sensor_b",
+      "timestamp": "2026-05-01T00:00:00Z",
+      "entity_id": "lake_station",
+      "attribute": "water_temp",
+      "value": 14.1,
+      "valid_from": "2026-05-01T00:00:00Z"
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_ct01_conflict",
+      "query": {
+        "entity_id": "lake_station",
+        "attribute": "water_temp",
+        "as_of_valid_time": "2026-05-01T12:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "CONTRADICTION",
+        "expected_abstention": true,
+        "expected_value": null,
+        "forbidden_values": [22.5, 14.1]
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "scenario_id": "ct_03_confidence_weighted",
+  "version": "1.0.0",
+  "category": "CONTRADICTION_HANDLING",
+  "description": "Two sensors assert conflicting ambient noise levels (45dB at conf 0.65 vs 72.5dB at conf 0.95). Evaluates deterministic resolution favoring highest confidence under CONFIDENCE_WEIGHTED.",
+  "contradiction_policy": "CONFIDENCE_WEIGHTED",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_ct03_sensor_low",
+      "timestamp": "2026-06-01T00:00:00Z",
+      "entity_id": "sensor_hub_01",
+      "attribute": "ambient_noise_db",
+      "value": 45.0,
+      "valid_from": "2026-06-01T00:00:00Z",
+      "confidence": 0.65
+    },
+    {
+      "event_type": "INSERT",
+      "event_id": "e_ct03_sensor_high",
+      "timestamp": "2026-06-01T00:00:00Z",
+      "entity_id": "sensor_hub_01",
+      "attribute": "ambient_noise_db",
+      "value": 72.5,
+      "valid_from": "2026-06-01T00:00:00Z",
+      "confidence": 0.95
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_ct03_resolve_high_conf",
+      "query": {
+        "entity_id": "sensor_hub_01",
+        "attribute": "ambient_noise_db",
+        "as_of_valid_time": "2026-06-02T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": 72.5,
+        "forbidden_values": [45.0],
+        "valid_interval": ["2026-06-01T00:00:00Z", null]
+      }
+    }
+  ]
+}

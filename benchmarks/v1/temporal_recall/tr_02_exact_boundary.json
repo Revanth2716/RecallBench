@@ -1,0 +1,60 @@
+{
+  "scenario_id": "tr_02_exact_boundary",
+  "version": "1.0.0",
+  "category": "TEMPORAL_RECALL",
+  "description": "Tests strict half-open interval boundaries [valid_from, valid_to) around the exact microsecond transition.",
+  "contradiction_policy": "DETERMINISTIC_ABSTAIN",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_tr02_1",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "entity_id": "sensor_x",
+      "attribute": "mode",
+      "value": "calibration",
+      "valid_from": "2026-01-01T00:00:00Z"
+    },
+    {
+      "event_type": "UPDATE",
+      "event_id": "e_tr02_2",
+      "timestamp": "2026-06-01T00:00:00Z",
+      "effective_time": "2026-06-01T00:00:00Z",
+      "entity_id": "sensor_x",
+      "attribute": "mode",
+      "value": "production",
+      "policy": "TEMPORAL_SUPERSEDE"
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_tr02_exact_boundary",
+      "query": {
+        "entity_id": "sensor_x",
+        "attribute": "mode",
+        "as_of_valid_time": "2026-06-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "production",
+        "forbidden_values": ["calibration"],
+        "valid_interval": ["2026-06-01T00:00:00Z", null]
+      }
+    },
+    {
+      "query_id": "q_tr02_just_before",
+      "query": {
+        "entity_id": "sensor_x",
+        "attribute": "mode",
+        "as_of_valid_time": "2026-05-31T23:59:59.999999Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "calibration",
+        "forbidden_values": ["production"],
+        "valid_interval": ["2026-01-01T00:00:00Z", "2026-06-01T00:00:00Z"]
+      }
+    }
+  ]
+}

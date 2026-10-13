@@ -1,0 +1,77 @@
+{
+  "version": "1.0.0",
+  "scenarios": [
+    {
+      "scenario_id": "tr_01_simple_history",
+      "category": "TEMPORAL_RECALL",
+      "file": "v1/temporal_recall/tr_01_simple_history.json",
+      "description": "User relocates office from Boston to Seattle. Evaluates point-in-time historical recall vs current recall vs pre-genesis query."
+    },
+    {
+      "scenario_id": "tr_02_exact_boundary",
+      "category": "TEMPORAL_RECALL",
+      "file": "v1/temporal_recall/tr_02_exact_boundary.json",
+      "description": "Tests strict half-open interval boundaries [valid_from, valid_to) around the exact microsecond transition."
+    },
+    {
+      "scenario_id": "sf_01_single_supersede",
+      "category": "STALE_FACT_DETECTION",
+      "file": "v1/stale_fact/sf_01_single_supersede.json",
+      "description": "User updates primary email. Validates that post-update queries strictly penalize returning superseded email."
+    },
+    {
+      "scenario_id": "sf_02_rapid_succession",
+      "category": "STALE_FACT_DETECTION",
+      "file": "v1/stale_fact/sf_02_rapid_succession.json",
+      "description": "Rapid succession of order state changes. Evaluates multiple superseded states and strict leakage prevention."
+    },
+    {
+      "scenario_id": "ct_01_abstain_conflict",
+      "category": "CONTRADICTION_HANDLING",
+      "file": "v1/contradiction/ct_01_abstain_conflict.json",
+      "description": "Two sensors assert conflicting temperature measurements at identical intervals. Evaluates deterministic abstention under DETERMINISTIC_ABSTAIN."
+    },
+    {
+      "scenario_id": "ct_02_lww_tie_break",
+      "category": "CONTRADICTION_HANDLING",
+      "file": "v1/contradiction/ct_02_lww_tie_break.json",
+      "description": "Two conflicting auth token assertions. Evaluates deterministic resolution under LAST_ASSERTION_WINS."
+    },
+    {
+      "scenario_id": "ct_03_confidence_weighted",
+      "category": "CONTRADICTION_HANDLING",
+      "file": "v1/contradiction/ct_03_confidence_weighted.json",
+      "description": "Two sensors assert conflicting ambient noise levels (45dB at conf 0.65 vs 72.5dB at conf 0.95). Evaluates deterministic resolution favoring highest confidence under CONFIDENCE_WEIGHTED."
+    },
+    {
+      "scenario_id": "ct_04_multivalued_collection",
+      "category": "CONTRADICTION_HANDLING",
+      "file": "v1/contradiction/ct_04_multivalued_collection.json",
+      "description": "Multiple role assignments asserted concurrently for a user (editor and admin). Evaluates deterministic merging into a sorted unique list under MULTIVALUED_COLLECTION."
+    },
+    {
+      "scenario_id": "ei_01_homonymous_attributes",
+      "category": "ENTITY_ISOLATION",
+      "file": "v1/entity_isolation/ei_01_homonymous_attributes.json",
+      "description": "Two distinct entities share identical attribute values. Evaluates strict entity isolation and provenance tracking."
+    },
+    {
+      "scenario_id": "ei_02_multi_tenant_isolation",
+      "category": "ENTITY_ISOLATION",
+      "file": "v1/entity_isolation/ei_02_multi_tenant_isolation.json",
+      "description": "Multi-tenant secret isolation. Verifies that Tenant Alpha secrets never cross over into Tenant Beta responses."
+    },
+    {
+      "scenario_id": "dc_01_forward_only_tombstone",
+      "category": "DELETION_COMPLIANCE",
+      "file": "v1/deletion_compliance/dc_01_forward_only_tombstone.json",
+      "description": "Customer enterprise plan deleted forward-only. Verifies historical validity is preserved while future queries are strictly tombstoned."
+    },
+    {
+      "scenario_id": "dc_02_retroactive_gdpr_purge",
+      "category": "DELETION_COMPLIANCE",
+      "file": "v1/deletion_compliance/dc_02_retroactive_gdpr_purge.json",
+      "description": "Sensitive passport data subject to GDPR retroactive purge. Evaluates that past and future queries never expose the purged value."
+    }
+  ]
+}

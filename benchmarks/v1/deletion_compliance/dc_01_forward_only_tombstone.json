@@ -1,0 +1,59 @@
+{
+  "scenario_id": "dc_01_forward_only_tombstone",
+  "version": "1.0.0",
+  "category": "DELETION_COMPLIANCE",
+  "description": "Customer enterprise plan deleted forward-only. Verifies historical validity is preserved while future queries are strictly tombstoned.",
+  "contradiction_policy": "DETERMINISTIC_ABSTAIN",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_dc01_1",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "entity_id": "customer_10",
+      "attribute": "billing_tier",
+      "value": "enterprise",
+      "valid_from": "2026-01-01T00:00:00Z"
+    },
+    {
+      "event_type": "DELETE",
+      "event_id": "e_dc01_del",
+      "timestamp": "2026-06-01T00:00:00Z",
+      "effective_time": "2026-06-01T00:00:00Z",
+      "entity_id": "customer_10",
+      "attribute": "billing_tier",
+      "deletion_type": "LOGICAL_TOMBSTONE",
+      "deletion_scope": "FORWARD_ONLY"
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_dc01_past",
+      "query": {
+        "entity_id": "customer_10",
+        "attribute": "billing_tier",
+        "as_of_valid_time": "2026-03-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "FOUND",
+        "expected_abstention": false,
+        "expected_value": "enterprise",
+        "forbidden_values": [],
+        "valid_interval": ["2026-01-01T00:00:00Z", "2026-06-01T00:00:00Z"]
+      }
+    },
+    {
+      "query_id": "q_dc01_post_deletion",
+      "query": {
+        "entity_id": "customer_10",
+        "attribute": "billing_tier",
+        "as_of_valid_time": "2026-08-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "TOMBSTONED_DELETED",
+        "expected_abstention": true,
+        "expected_value": null,
+        "forbidden_values": ["enterprise"]
+      }
+    }
+  ]
+}

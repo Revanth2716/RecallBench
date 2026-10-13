@@ -1,0 +1,58 @@
+{
+  "scenario_id": "dc_02_retroactive_gdpr_purge",
+  "version": "1.0.0",
+  "category": "DELETION_COMPLIANCE",
+  "description": "Sensitive passport data subject to GDPR retroactive purge. Evaluates that past and future queries never expose the purged value.",
+  "contradiction_policy": "DETERMINISTIC_ABSTAIN",
+  "timeline_events": [
+    {
+      "event_type": "INSERT",
+      "event_id": "e_dc02_1",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "entity_id": "eu_citizen",
+      "attribute": "passport_number",
+      "value": "E12345678",
+      "valid_from": "2026-01-01T00:00:00Z"
+    },
+    {
+      "event_type": "DELETE",
+      "event_id": "e_dc02_del",
+      "timestamp": "2026-08-01T00:00:00Z",
+      "effective_time": "2026-01-01T00:00:00Z",
+      "entity_id": "eu_citizen",
+      "attribute": "passport_number",
+      "deletion_type": "LOGICAL_TOMBSTONE",
+      "deletion_scope": "RETROACTIVE_PURGE"
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_dc02_historical_purge",
+      "query": {
+        "entity_id": "eu_citizen",
+        "attribute": "passport_number",
+        "as_of_valid_time": "2026-03-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "TOMBSTONED_DELETED",
+        "expected_abstention": true,
+        "expected_value": null,
+        "forbidden_values": ["E12345678"]
+      }
+    },
+    {
+      "query_id": "q_dc02_future_purge",
+      "query": {
+        "entity_id": "eu_citizen",
+        "attribute": "passport_number",
+        "as_of_valid_time": "2026-09-01T00:00:00Z"
+      },
+      "ground_truth": {
+        "expected_status": "TOMBSTONED_DELETED",
+        "expected_abstention": true,
+        "expected_value": null,
+        "forbidden_values": ["E12345678"]
+      }
+    }
+  ]
+}
